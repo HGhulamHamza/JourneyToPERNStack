@@ -1,9 +1,10 @@
 const express = require("express");
 const { Client } = require("pg");
 const app = express();
+const cors=require("cors")
 
 app.use(express.json()); // middleware
-
+app.use (cors())
 app.post("/add", async function (req, res) {
   const note = req.body;
 
@@ -24,7 +25,8 @@ app.post("/add", async function (req, res) {
 });
 
 app.get("/notes", async function (req, res) {
-  const client = new Client({
+  try {
+      const client = new Client({
     connectionString: "postgresql://neondb_owner:npg_Syt2qOnCrlb8@ep-weathered-term-adgmkr8s-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
   });
 
@@ -36,6 +38,14 @@ app.get("/notes", async function (req, res) {
   return res.json({
     data: response.rows
   });
+    
+  } catch (error) {
+    return res.json({
+      msg:"internal server error"
+    })
+    
+  }
+
 });
 
 app.listen(3100, function () {
